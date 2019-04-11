@@ -685,7 +685,11 @@ def test():
 
   test_w, test_c, test_lens, test_masks = create_batches(
     test, args.batch_size, word_lexicon, char_lexicon, config, sort=False, shuffle=False, use_cuda=use_cuda)
-
+  #EXPORT ONNX
+  input_layers = ["input_layer"]+[config["token_encoder"]["name"], config["encoder"]["name"], config["classifier"]["name"]]
+  output_layer = ["output_layer"]
+  torch.nn.onnx(model, test_w, test_c, test_lens, "elmo.onnx", input_names=input_layers, output_names=output_layer, verbose=True)
+  return
   test_result = eval_model(model, (test_w, test_c, test_lens, test_masks))
 
   logging.info("test_ppl={:.6f}".format(test_result))
