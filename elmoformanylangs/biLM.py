@@ -279,10 +279,10 @@ class Model(nn.Module):
     if save_classify_layer:
       torch.save(self.classify_layer.state_dict(), os.path.join(path, 'classifier.pkl'))
 
-  def load_model(self, path):
-    self.token_embedder.load_state_dict(torch.load(os.path.join(path, 'token_embedder.pkl')))
-    self.encoder.load_state_dict(torch.load(os.path.join(path, 'encoder.pkl')))
-    self.classify_layer.load_state_dict(torch.load(os.path.join(path, 'classifier.pkl')))
+  def load_model(self, path, use_cpu=False):
+    self.token_embedder.load_state_dict(torch.load(os.path.join(path, 'token_embedder.pkl'), map_cpu=use_cpu))
+    self.encoder.load_state_dict(torch.load(os.path.join(path, 'encoder.pkl'),map_cpu=use_cpu))
+    self.classify_layer.load_state_dict(torch.load(os.path.join(path, 'classifier.pkl'), map_cpu=use_cpu))
 
 
 def eval_model(model, valid):
@@ -675,7 +675,7 @@ def test():
     model.cuda()
 
   logging.info(str(model))
-  model.load_model(args.model)
+  model.load_model(args.model, use_cuda)
   if config['token_embedder']['name'].lower() == 'cnn':
     test = read_corpus(args.input, config['token_embedder']['max_characters_per_token'], max_sent_len=10000)
   elif config['token_embedder']['name'].lower() == 'lstm':
