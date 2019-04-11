@@ -279,10 +279,11 @@ class Model(nn.Module):
     if save_classify_layer:
       torch.save(self.classify_layer.state_dict(), os.path.join(path, 'classifier.pkl'))
 
-  def load_model(self, path, location='gpu'):
+  def load_model(self, path, location='gpu', load_classifier_layer=True):
     self.token_embedder.load_state_dict(torch.load(os.path.join(path, 'token_embedder.pkl'), map_location=location))
     self.encoder.load_state_dict(torch.load(os.path.join(path, 'encoder.pkl'), map_location=location))
-    self.classify_layer.load_state_dict(torch.load(os.path.join(path, 'classifier.pkl'), map_location=location))
+    if load_classifier_layer:
+      self.classify_layer.load_state_dict(torch.load(os.path.join(path, 'classifier.pkl'), map_location=location))
 
 
 def eval_model(model, valid):
@@ -675,7 +676,7 @@ def test():
     model.cuda()
 
   logging.info(str(model))
-  model.load_model(args.model, 'cpu')
+  model.load_model(args.model, 'cpu', load_classifier_layer=False)
   if config['token_embedder']['name'].lower() == 'cnn':
     test = read_corpus(args.input, config['token_embedder']['max_characters_per_token'], max_sent_len=10000)
   elif config['token_embedder']['name'].lower() == 'lstm':
