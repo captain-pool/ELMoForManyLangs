@@ -689,7 +689,7 @@ def test():
   #EXPORT ONNX
   input_layers = ["input_layer"]+[config["token_embedder"]["name"], config["encoder"]["name"], config["classifier"]["name"]]
   output_layer = ["output_layer"]
-  torch.nn.onnx(model, test_w, test_c, test_lens, "elmo.onnx", input_names=input_layers, output_names=output_layer, verbose=True)
+  torch.onnx.export(model, test_w, test_c, test_lens, "elmo.onnx", input_names=input_layers, output_names=output_layer, verbose=True)
   return
   test_result = eval_model(model, (test_w, test_c, test_lens, test_masks))
 
